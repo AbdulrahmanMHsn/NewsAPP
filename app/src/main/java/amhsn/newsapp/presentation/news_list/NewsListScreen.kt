@@ -30,6 +30,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun NewsListScreen(modifier: Modifier,onItemClick:(String)->Unit ,viewModel: NewsViewModel = viewModel()) {
 
+
+
+
     val list = viewModel.article.value
     val activity = (LocalContext.current as? Activity)
 //    val list = viewModel.article.collectAsLazyPagingItems()
@@ -41,7 +44,7 @@ fun NewsListScreen(modifier: Modifier,onItemClick:(String)->Unit ,viewModel: New
                 items(list) {
                     NewsItem(
                         modifier.fillMaxWidth(),
-                        onCLickItem = { onItemClick("https://edition.cnn.com/2021/12/25/entertainment/olivia-munn-john-mulaney-baby/index.html") },
+                        onCLickItem = { onItemClick(it.url!!) },
                         article = it,
                         onShareItem = {
                             shareItem(it.url!!,activity!!)

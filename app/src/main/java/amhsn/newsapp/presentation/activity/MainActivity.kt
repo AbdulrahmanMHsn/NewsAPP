@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 
 @ExperimentalFoundationApi
@@ -40,14 +41,15 @@ fun App() {
 
             val navController = rememberNavController()
             val scaffoldState = rememberScaffoldState()
-
+            val sharedViewModel: SharedViewModel = viewModel()
 
             Scaffold(
                 scaffoldState = scaffoldState,
             ) { innerPadding ->
                 Navigation(
                     modifier = Modifier.padding(innerPadding),
-                    navController = navController
+                    navController = navController,
+                    sharedViewModel
                 )
             }
         }

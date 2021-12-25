@@ -23,6 +23,7 @@ import androidx.navigation.navArgument
 fun Navigation(
     modifier: Modifier,
     navController: NavHostController,
+    sharedViewModel: SharedViewModel
 ) {
 
     NavHost(
@@ -32,22 +33,16 @@ fun Navigation(
 
         composable(Screens.NewsList.route) {
             NewsListScreen(modifier = modifier, onItemClick = { url ->
-//                navController.navigate(Screens.Details.route) {
-//                    launchSingleTop = true
-//                }
+                sharedViewModel.shareURL(url)
+                navController.navigate(Screens.Details.route) {
+                    launchSingleTop = true
+                }
             })
         }
 
-        composable(Screens.Details.route,
-            arguments = listOf(
-//                navArgument("url") { type = NavType.StringType }
-            )) {
-            DetailsScreen("")
+        composable(Screens.Details.route) {
+            DetailsScreen(urlToRender = sharedViewModel.url.value)
         }
-//
-//        composable(Screens.Search.route) {
-//
-//        }
 
         composable("don't remove this otherwise application will crash") {}
 

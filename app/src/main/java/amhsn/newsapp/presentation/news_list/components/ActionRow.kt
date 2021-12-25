@@ -24,14 +24,14 @@ fun BoxScope.ActionsRow(
 ) {
 
         IconButton(
-            modifier = Modifier.size(actionIconSize).align(Alignment.CenterEnd),
+            modifier = Modifier.size(50.dp).align(Alignment.CenterEnd),
             onClick = {
                 onShare()
             },
             content = {
                 Icon(
                     imageVector = Icons.Default.Share,
-                    tint = Color.Gray,
+                    tint = Color.Black,
                     contentDescription = "delete action",
                 )
             }
