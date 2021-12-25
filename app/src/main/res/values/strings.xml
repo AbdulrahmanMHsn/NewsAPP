@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NewsAPP</string>
+    <string name="news_list">News list</string>
+    <string name="details">Details</string>
+    <string name="search" />
+    <string name="retry">Retry</string>
+    <string name="connection_issue">Connection Issue</string>
+</resources>
