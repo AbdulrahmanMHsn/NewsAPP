@@ -5,4 +5,5 @@
     <string name="search" />
     <string name="retry">Retry</string>
     <string name="connection_issue">Connection Issue</string>
+    <string name="news">News</string>
 </resources>

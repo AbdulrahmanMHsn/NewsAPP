@@ -9,10 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 
 
 @ExperimentalMaterialApi
@@ -41,10 +39,11 @@ fun Navigation(
         }
 
         composable(Screens.Details.route) {
-            DetailsScreen(urlToRender = sharedViewModel.url.value)
+            DetailsScreen(urlToRender = sharedViewModel.url.value){
+                navController.popBackStack()
+            }
         }
 
         composable("don't remove this otherwise application will crash") {}
-
     }
 }

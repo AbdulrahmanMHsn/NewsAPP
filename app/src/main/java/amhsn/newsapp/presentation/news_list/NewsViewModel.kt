@@ -1,5 +1,6 @@
 package amhsn.newsapp.presentation.news_list
 
+import amhsn.data.paging.ProductsPagingSource
 import amhsn.data.repository.NewsRepoImpl
 import amhsn.domain.entities.Article
 import amhsn.domain.entities.NewsRequest
@@ -28,46 +29,43 @@ class NewsViewModel(private val getNewsUseCase: GetNewsUseCase = GetNewsUseCase(
         getNews()
     }
 
-//    var article:Flow<PagingData<Article>> = flow {  }
+    var article:Flow<PagingData<Article>> = flow {  }
 
-    var article = mutableStateOf<List<Article>?>(null)
-    var progress = mutableStateOf(true)
-
-    private fun getNews()=viewModelScope.launch(Dispatchers.IO) {
-        when (val response = getNewsUseCase.invoke(NewsRequest("us"))) {
-            is Response.Success -> {
-                article.value = response.result.articles
-                progress.value = false
-            }
-            is Response.Error -> {
-                progress.value = false
-            }
-        }
-    }
-
-//    private var job: Job? = null
+//    var article = mutableStateOf<List<Article>?>(null)
+//    var progress = mutableStateOf(true)
 //
-//    private fun getNews() {
-//        job?.cancel()
-//        job = viewModelScope.launch(Dispatchers.IO) {
-//            val flow = Pager(
-//                PagingConfig(
-//                    pageSize = 5,
-//                    enablePlaceholders = true,
-//                )
-//            ) {
-//                ProductsPagingSource(
-//                    getNewsUseCase,
-//                    NewsRequest(category = "us")
-//                )
-//            }.flow.cachedIn(viewModelScope)
-//
-//            withContext(Dispatchers.Main)
-//            {
-//                article = flow
+//    private fun getNews()=viewModelScope.launch(Dispatchers.IO) {
+//        when (val response = getNewsUseCase.invoke(NewsRequest("us"))) {
+//            is Response.Success -> {
+//                article.value = response.result.articles
+//                progress.value = false
+//            }
+//            is Response.Error -> {
+//                progress.value = false
 //            }
 //        }
 //    }
 
 
-}
+
+    private fun getNews() = viewModelScope.launch(Dispatchers.IO) {
+            val flow = Pager(
+                PagingConfig(
+                    pageSize = 5,
+                    enablePlaceholders = true,
+                )
+            ) {
+                ProductsPagingSource(
+                    getNewsUseCase,
+                    NewsRequest(category = "us")
+                )
+            }.flow.cachedIn(viewModelScope)
+
+            withContext(Dispatchers.Main)
+            {
+                article = flow
+            }
+        }
+    }
+
+
