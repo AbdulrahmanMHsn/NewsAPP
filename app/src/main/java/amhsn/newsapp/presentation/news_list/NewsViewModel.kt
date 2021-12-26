@@ -7,8 +7,10 @@ import amhsn.domain.entities.NewsRequest
 import amhsn.domain.usecase.GetNewsUseCase
 import amhsn.domain.util.Response
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,36 +18,24 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class NewsViewModel(private val getNewsUseCase: GetNewsUseCase = GetNewsUseCase(NewsRepoImpl())):ViewModel() {
+@HiltViewModel
+class NewsViewModel @Inject constructor(private val getNewsUseCase: GetNewsUseCase):ViewModel() {
 
     init {
         getNews()
     }
 
-    var article:Flow<PagingData<Article>> = flow {  }
-
-//    var article = mutableStateOf<List<Article>?>(null)
-//    var progress = mutableStateOf(true)
-//
-//    private fun getNews()=viewModelScope.launch(Dispatchers.IO) {
-//        when (val response = getNewsUseCase.invoke(NewsRequest("us"))) {
-//            is Response.Success -> {
-//                article.value = response.result.articles
-//                progress.value = false
-//            }
-//            is Response.Error -> {
-//                progress.value = false
-//            }
-//        }
-//    }
-
+    var article:Flow<PagingData<Article>> by mutableStateOf(flow {  })
+    private set
 
 
     private fun getNews() = viewModelScope.launch(Dispatchers.IO) {
@@ -57,7 +47,7 @@ class NewsViewModel(private val getNewsUseCase: GetNewsUseCase = GetNewsUseCase(
             ) {
                 ProductsPagingSource(
                     getNewsUseCase,
-                    NewsRequest(category = "us")
+                    NewsRequest(country = "us")
                 )
             }.flow.cachedIn(viewModelScope)
 
@@ -66,6 +56,7 @@ class NewsViewModel(private val getNewsUseCase: GetNewsUseCase = GetNewsUseCase(
                 article = flow
             }
         }
+
     }
 
 

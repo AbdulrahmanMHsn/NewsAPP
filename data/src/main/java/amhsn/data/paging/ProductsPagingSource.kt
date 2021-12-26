@@ -9,7 +9,7 @@ import androidx.paging.PagingState
 
 
 class ProductsPagingSource(
-    private val getNewsUseCase: GetNewsUseCase = GetNewsUseCase(NewsRepoImpl()),
+    private val getNewsUseCase: GetNewsUseCase,
     private val newsRequest: NewsRequest
 ) : PagingSource<Int, Article>() {
 
@@ -27,6 +27,7 @@ class ProductsPagingSource(
 
         return try {
             val response = getNewsUseCase.invoke(newsRequest,position)
+
             val nextKey = if (response.articles.isEmpty()) {
                     null
                 } else {

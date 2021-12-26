@@ -27,13 +27,17 @@ fun Source.toSourceData():SourceData{
 }
 
 fun ArticleData.toArticleDomain():Article{
-    return Article(author,content,description,publishedAt,source?.toSourceDomain(),title, url, urlToImage)
+    return Article(author,content,description,publishedAt,source.toSourceDomain(),title, url, urlToImage)
 }
 
 fun Article.toArticleData():ArticleData{
-    return ArticleData(author,description, publishedAt, title, source?.toSourceData(),title, url, urlToImage)
+    return ArticleData(author,description, publishedAt, title, source.toSourceData(),title, url, urlToImage)
 }
 
 fun NewsResponseData.toNewsResponseDomain(): NewsResponse {
     return NewsResponse(articleData.map { it.toArticleDomain() },status, totalResults)
+}
+
+fun NewsResponse.toNewsResponseData(): NewsResponseData {
+    return NewsResponseData(articleData = articles.map { it.toArticleData() })
 }

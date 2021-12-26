@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -38,13 +39,14 @@ import androidx.paging.compose.collectAsLazyPagingItems
 
 @ExperimentalMaterialApi
 @Composable
-fun NewsListScreen(modifier: Modifier,onItemClick:(String)->Unit ,viewModel: NewsViewModel = viewModel()) {
+fun NewsListScreen(modifier: Modifier,onItemClick:(String)->Unit ,viewModel: NewsViewModel = hiltViewModel()) {
     
 //    val list = viewModel.article.value
     val activity = (LocalContext.current as? Activity)
     val list = viewModel.article.collectAsLazyPagingItems()
 
     Scaffold(topBar = { SimpleTopBar(title = stringResource(id = R.string.news)) }) {
+
 
 
         NewsList(modifier = modifier, list = list)

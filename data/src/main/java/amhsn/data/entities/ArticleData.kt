@@ -15,7 +15,7 @@ data class ArticleData(
     @SerialName("publishedAt")
     val publishedAt: String?,
     @SerialName("source")
-    val source: SourceData?,
+    val source: SourceData,
     @SerialName("title")
     val title: String?,
     @SerialName("url")

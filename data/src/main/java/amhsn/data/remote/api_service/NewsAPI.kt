@@ -13,7 +13,7 @@ class NewsAPI(private val ktorClient: HttpClient) {
 //        parameter("category", newsRequestData.category)
 //        parameter("q", newsRequestData.q)
 //        parameter("pageSize", 15)
-//        parameter("page",page)
+        parameter("page",page)
     }
 
 }
