@@ -52,7 +52,12 @@ fun Navigation(
         }
 
         composable(Screens.Search.route) {
-            SearchScreen(onBackPress = { navController.popBackStack()})
+            SearchScreen(onBackPress = { navController.popBackStack()},onItemClick = {url->
+                sharedViewModel.shareURL(url)
+                navController.navigate(Screens.Details.route) {
+                    launchSingleTop = true
+                }
+            })
         }
 
         composable("don't remove this otherwise application will crash") {}

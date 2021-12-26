@@ -3,7 +3,7 @@ package amhsn.newsapp.presentation.search
 import amhsn.domain.entities.Article
 import amhsn.newsapp.presentation.common_components.NoInternetConnection
 import amhsn.newsapp.presentation.common_components.SomethingWentWrong
-import amhsn.newsapp.presentation.news_list.components.NewsItem
+import amhsn.newsapp.presentation.search.components.SearchItem
 import amhsn.newsapp.presentation.search.components.SearchView
 import amhsn.newsapp.presentation.theme.BackGround
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -33,7 +33,7 @@ import java.net.UnknownHostException
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
-fun SearchScreen(onBackPress: () -> Unit, searchViewModel: SearchViewModel = hiltViewModel()) {
+fun SearchScreen(onBackPress: () -> Unit,onItemClick: (String) -> Unit, searchViewModel: SearchViewModel = hiltViewModel()) {
 
     val list = searchViewModel.article.collectAsLazyPagingItems()
     var txtSearch by remember { mutableStateOf("") }
@@ -56,12 +56,12 @@ fun SearchScreen(onBackPress: () -> Unit, searchViewModel: SearchViewModel = hil
         Divider(thickness = 1.dp)
 
 
-        SearchList(list = list, onItemClick = {}, onShareItem = {})
+        SearchList(list = list, onItemClick = onItemClick)
     }
 
 
     if (!NetworkState(list, searchViewModel)) {
-        SearchList(list = list, onItemClick = {}, onShareItem = {})
+        SearchList(list = list, onItemClick = onItemClick)
     }
 
     if (list.loadState.refresh is LoadState.Loading) {
@@ -75,7 +75,7 @@ fun SearchScreen(onBackPress: () -> Unit, searchViewModel: SearchViewModel = hil
 
     if (list.loadState.refresh is LoadState.NotLoading) {
         Box(modifier = Modifier.fillMaxSize()) {
-            if(list.itemSnapshotList.isNullOrEmpty()) {
+            if (list.itemSnapshotList.isNullOrEmpty()) {
                 Text(text = "Empty List", modifier = Modifier.align(Alignment.Center))
             }
         }
@@ -90,16 +90,13 @@ fun SearchList(
     modifier: Modifier = Modifier,
     list: LazyPagingItems<Article>,
     onItemClick: (String) -> Unit,
-    onShareItem: (String) -> Unit
 ) {
     LazyColumn {
         items(list.itemCount) { index ->
             list[index]?.let { item ->
-                NewsItem(
-                    modifier.fillMaxWidth(),
-                    onCLickItem = { onItemClick(item.url.toString()) },
+                SearchItem(
                     article = item,
-                    onShareItem = { onShareItem(item.urlToImage.toString()) }
+                    onItemClick = { onItemClick(item.url.toString()) },
                 )
             }
         }

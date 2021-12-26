@@ -25,7 +25,7 @@ fun SearchItem(article: Article, onItemClick: () -> Unit) {
             .padding(8.dp)
             .fillMaxWidth()
             .height(250.dp)
-            .clickable { }, elevation = 8.dp, shape = RoundedCornerShape(8.dp)
+            .clickable {onItemClick() }, elevation = 8.dp, shape = RoundedCornerShape(8.dp)
     ) {
         Column(
             Modifier

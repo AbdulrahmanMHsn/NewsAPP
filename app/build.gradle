@@ -79,7 +79,8 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:0.20.2"
 
     // Splash Screen
-    implementation 'androidx.core:core-splashscreen:1.0.0-alpha02'
+    //noinspection GradleDependency
+    implementation 'androidx.core:core-splashscreen:1.0.0-alpha01'
 
     // Navigation
     def navigation_version = '2.4.0-beta02'
