@@ -10,9 +10,13 @@ class NewsAPI(private val ktorClient: HttpClient) {
     suspend fun getNews(newsRequestData: NewsRequestData,page:Int) = ktorClient.get<NewsResponseData> {
         url("top-headlines")
         parameter("country", newsRequestData.country)
-//        parameter("category", newsRequestData.category)
-//        parameter("q", newsRequestData.q)
-//        parameter("pageSize", 15)
+        parameter("page",page)
+    }
+
+
+    suspend fun search(newsRequestData: NewsRequestData,page:Int) = ktorClient.get<NewsResponseData> {
+        url("everything")
+        parameter("q", newsRequestData.q)
         parameter("page",page)
     }
 

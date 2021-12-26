@@ -10,12 +10,8 @@ import amhsn.domain.entities.NewsResponse
 import amhsn.domain.entities.Source
 
 
-fun NewsRequestData.toNewsRequestDomain(): NewsRequest {
-    return NewsRequest(country)
-}
-
 fun NewsRequest.toNewsRequestData(): NewsRequestData {
-    return NewsRequestData(country)
+    return NewsRequestData(country,q)
 }
 
 fun SourceData.toSourceDomain():Source{

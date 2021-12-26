@@ -1,17 +1,19 @@
 package amhsn.newsapp.presentation.common_components
 
+import amhsn.newsapp.R
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import amhsn.newsapp.R
 
 @Composable
 fun SimpleScaffold(
@@ -77,7 +79,7 @@ fun TopBar(
                 }
             }
         },
-        title = { Text(text = title,color = MaterialTheme.colors.onPrimary) },
+        title = { Text(text = title, color = MaterialTheme.colors.onPrimary) },
         elevation = 0.dp,
         backgroundColor = colorResource(id = R.color.background)
     )
@@ -87,9 +89,20 @@ fun TopBar(
 @Composable
 fun SimpleTopBar(
     title: String,
+    onActionClick:()->Unit
 ) {
     TopAppBar(
-        title = { Text(text = title,color = MaterialTheme.colors.onPrimary) },
+        actions = {
+
+            IconButton(onClick = onActionClick) {
+                Icon(
+                    imageVector = Icons.Default.Search, contentDescription = null,
+                    tint = Color.White
+                )
+            }
+
+        },
+        title = { Text(text = title, color = MaterialTheme.colors.onPrimary) },
         elevation = 0.dp,
         backgroundColor = colorResource(id = R.color.background)
     )

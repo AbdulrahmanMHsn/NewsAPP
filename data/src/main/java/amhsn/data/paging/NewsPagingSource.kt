@@ -9,7 +9,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
 
-class ProductsPagingSource(
+class NewsPagingSource(
     private val getNewsUseCase: GetNewsUseCase,
     private val newsRequest: NewsRequest
 ) : PagingSource<Int, Article>() {

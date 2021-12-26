@@ -28,4 +28,8 @@ class NewsRepoImpl(
       return articleDao.getNews().map { it.toNewsResponseDomain() }
     }
 
+    override suspend fun search(newsRequest: NewsRequest, page: Int): NewsResponse {
+        return newsApi.search(newsRequest.toNewsRequestData(), page).toNewsResponseDomain()
+    }
+
 }

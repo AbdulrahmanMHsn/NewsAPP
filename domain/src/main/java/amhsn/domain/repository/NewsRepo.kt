@@ -15,4 +15,6 @@ interface NewsRepo {
 
     suspend fun getNewsLocal(): Flow<NewsResponse>
 
+
+    suspend fun search(newsRequest: NewsRequest,page:Int):NewsResponse
 }

@@ -2,6 +2,7 @@ package amhsn.newsapp.presentation.activity
 
 import amhsn.newsapp.presentation.details.DetailsScreen
 import amhsn.newsapp.presentation.news_list.NewsListScreen
+import amhsn.newsapp.presentation.search.SearchScreen
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
@@ -35,13 +36,23 @@ fun Navigation(
                 navController.navigate(Screens.Details.route) {
                     launchSingleTop = true
                 }
-            })
+            },
+                onActionClick = {
+                    navController.navigate(Screens.Search.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
         composable(Screens.Details.route) {
-            DetailsScreen(urlToRender = sharedViewModel.url.value){
+            DetailsScreen(urlToRender = sharedViewModel.url.value) {
                 navController.popBackStack()
             }
+        }
+
+        composable(Screens.Search.route) {
+            SearchScreen(onBackPress = { navController.popBackStack()})
         }
 
         composable("don't remove this otherwise application will crash") {}

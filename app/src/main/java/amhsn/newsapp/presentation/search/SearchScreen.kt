@@ -1,16 +1,11 @@
-package amhsn.newsapp.presentation.news_list
+package amhsn.newsapp.presentation.search
 
 import amhsn.domain.entities.Article
-import amhsn.newsapp.R
 import amhsn.newsapp.presentation.common_components.NoInternetConnection
-import amhsn.newsapp.presentation.common_components.SimpleTopBar
 import amhsn.newsapp.presentation.common_components.SomethingWentWrong
 import amhsn.newsapp.presentation.news_list.components.NewsItem
-import amhsn.newsapp.presentation.news_list.components.ShimmerAnimationNewsItem
+import amhsn.newsapp.presentation.search.components.SearchView
 import amhsn.newsapp.presentation.theme.BackGround
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,101 +15,78 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import io.ktor.client.features.*
 import io.ktor.network.sockets.*
-import kotlinx.coroutines.delay
 import java.net.UnknownHostException
 
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
+@ExperimentalComposeUiApi
 @Composable
-fun NewsListScreen(
-    modifier: Modifier,
-    onItemClick: (String) -> Unit,
-    onActionClick: () -> Unit,
-    viewModel: NewsViewModel = hiltViewModel()
-) {
+fun SearchScreen(onBackPress: () -> Unit, searchViewModel: SearchViewModel = hiltViewModel()) {
 
-    val activity = (LocalContext.current as Activity)
-    val list = viewModel.article.collectAsLazyPagingItems()
-    var isRefreshing by remember { mutableStateOf(false) }
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
+    val list = searchViewModel.article.collectAsLazyPagingItems()
+    var txtSearch by remember { mutableStateOf("") }
 
+    Column {
 
-    Scaffold(topBar = {
-        SimpleTopBar(
-            title = stringResource(id = R.string.news),
-            onActionClick = onActionClick
+        SearchView(
+            txtSearch,
+            onTextSearchChange = {
+                txtSearch = it
+                if (txtSearch.length > 2) {
+                    searchViewModel.search(txtSearch)
+                }
+            },
+            onBackPress,
+            onClear = { txtSearch = "" },
+            onSearch = { searchViewModel.search(txtSearch) }
         )
-    }) {
 
-        SwipeRefresh(state = swipeRefreshState, onRefresh = {
-            isRefreshing = true
-            viewModel.getNews()
-        }) {
+        Divider(thickness = 1.dp)
 
 
-            NewsList(modifier = modifier, list = list, onItemClick = onItemClick) {
-                shareItem(it, activity)
-            }
+        SearchList(list = list, onItemClick = {}, onShareItem = {})
+    }
 
-            if (!NetworkState(list, viewModel)) {
-                NewsList(modifier = modifier, list = list, onItemClick = onItemClick) {
-                    shareItem(it, activity)
-                }
-            }
 
-            if (list.loadState.refresh is LoadState.Loading) {
-                LazyColumn {
-                    items(10) {
-                        ShimmerAnimationNewsItem()
-                    }
-                }
-            }
+    if (!NetworkState(list, searchViewModel)) {
+        SearchList(list = list, onItemClick = {}, onShareItem = {})
+    }
+
+    if (list.loadState.refresh is LoadState.Loading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(
+                color = BackGround,
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
+    }
 
-        LaunchedEffect(isRefreshing) {
-            if (isRefreshing) {
-                delay(1000L)
-                isRefreshing = false
+    if (list.loadState.refresh is LoadState.NotLoading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            if(list.itemSnapshotList.isNullOrEmpty()) {
+                Text(text = "Empty List", modifier = Modifier.align(Alignment.Center))
             }
         }
     }
 
-}
-
-
-fun shareItem(url: String, activity: Context) {
-
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(
-            Intent.EXTRA_TEXT,
-            url
-        )
-        type = "text/plain"
-    }
-
-    val shareIntent = Intent.createChooser(sendIntent, "Check out this news")
-    activity.startActivity(shareIntent)
 }
 
 
 @ExperimentalMaterialApi
 @Composable
-fun NewsList(
+fun SearchList(
     modifier: Modifier = Modifier,
     list: LazyPagingItems<Article>,
     onItemClick: (String) -> Unit,
@@ -148,7 +120,7 @@ fun NewsList(
                         tint = BackGround,
                     )
                     Spacer(modifier = Modifier.size(4.dp))
-                    Text(text = stringResource(R.string.connection_issue))
+                    Text(text = stringResource(amhsn.newsapp.R.string.connection_issue))
                     Spacer(modifier = Modifier.size(10.dp))
                     Button(
                         onClick = { list.retry() },
@@ -158,7 +130,7 @@ fun NewsList(
                             contentColor = Color.White
                         )
                     ) {
-                        Text(text = stringResource(R.string.retry))
+                        Text(text = stringResource(amhsn.newsapp.R.string.retry))
                     }
                 }
             }
@@ -174,15 +146,13 @@ fun NewsList(
                 }
             }
         }
-
-
     }
 }
 
 
 @ExperimentalFoundationApi
 @Composable
-fun NetworkState(newsList: LazyPagingItems<Article>, viewModel: NewsViewModel): Boolean {
+fun NetworkState(newsList: LazyPagingItems<Article>, viewModel: SearchViewModel): Boolean {
     return if (newsList.loadState.refresh is LoadState.Error) {
         when ((newsList.loadState.refresh as LoadState.Error).error) {
             is UnknownHostException -> {
@@ -203,8 +173,3 @@ fun NetworkState(newsList: LazyPagingItems<Article>, viewModel: NewsViewModel): 
         true
     }
 }
-
-
-
-
-

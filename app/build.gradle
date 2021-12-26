@@ -75,6 +75,9 @@ dependencies {
     implementation "androidx.compose.material:material-icons-core:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
+    // Swipe refresh
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.20.2"
+
     // Splash Screen
     implementation 'androidx.core:core-splashscreen:1.0.0-alpha02'
 
