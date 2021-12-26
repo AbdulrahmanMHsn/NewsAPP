@@ -58,7 +58,7 @@ class Ktor {
                 protocol = URLProtocol.HTTPS
             }
 
-            header("X-Api-Key", "ee267f17eeb74ac0965887a772ef6f90")
+            header("X-Api-Key", "7ed48ad3352b4d6aac3ea1ea84e02421")
         }
     }
 

@@ -37,6 +37,8 @@ class NewsViewModel @Inject constructor(private val getNewsUseCase: GetNewsUseCa
     var article:Flow<PagingData<Article>> by mutableStateOf(flow {  })
     private set
 
+    var isProgress by mutableStateOf(true)
+
 
     private fun getNews() = viewModelScope.launch(Dispatchers.IO) {
             val flow = Pager(
@@ -54,6 +56,7 @@ class NewsViewModel @Inject constructor(private val getNewsUseCase: GetNewsUseCa
             withContext(Dispatchers.Main)
             {
                 article = flow
+                isProgress = false
             }
         }
 

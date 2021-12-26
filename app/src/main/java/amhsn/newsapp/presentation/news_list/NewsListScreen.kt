@@ -2,27 +2,21 @@ package amhsn.newsapp.presentation.news_list
 
 import amhsn.domain.entities.Article
 import amhsn.newsapp.R
-import amhsn.newsapp.presentation.common_components.SimpleScaffold
+import amhsn.newsapp.presentation.activity.Screens
 import amhsn.newsapp.presentation.common_components.SimpleTopBar
 import amhsn.newsapp.presentation.news_list.components.NewsItem
 import amhsn.newsapp.presentation.news_list.components.ShimmerAnimationNewsItem
-import amhsn.newsapp.presentation.theme.LightGray100
+import amhsn.newsapp.presentation.theme.BackGround
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Path
-import android.provider.SyncStateContract
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -39,46 +32,35 @@ import androidx.paging.compose.collectAsLazyPagingItems
 
 @ExperimentalMaterialApi
 @Composable
-fun NewsListScreen(modifier: Modifier,onItemClick:(String)->Unit ,viewModel: NewsViewModel = hiltViewModel()) {
-    
-//    val list = viewModel.article.value
-    val activity = (LocalContext.current as? Activity)
+fun NewsListScreen(
+    modifier: Modifier,
+    onItemClick: (String) -> Unit,
+    viewModel: NewsViewModel = hiltViewModel()
+) {
+
+    val activity = (LocalContext.current as Activity)
     val list = viewModel.article.collectAsLazyPagingItems()
 
     Scaffold(topBar = { SimpleTopBar(title = stringResource(id = R.string.news)) }) {
 
+       NewsList(modifier = modifier, list = list, onItemClick = onItemClick) {
+            shareItem(it, activity)
+        }
 
-
-        NewsList(modifier = modifier, list = list)
-//        LazyColumn {
-//            list?.let { list ->
-//                items(list) {
-//                    NewsItem(
-//                        modifier.fillMaxWidth(),
-//                        onCLickItem = { onItemClick(it.url!!) },
-//                        article = it,
-//                        onShareItem = {
-//                            shareItem(it.url!!,activity!!)
-//                        }
-//                    )
-//                }
-//            }
-//        }
-
-//        if (viewModel.progress.value) {
-//            LazyColumn {
-//                items(10) {
-//                    ShimmerAnimationNewsItem()
-//                }
-//            }
-//        }
+        if (viewModel.isProgress){
+            LazyColumn{
+                items(10){
+                    ShimmerAnimationNewsItem()
+                }
+            }
+        }
 
     }
 
 }
 
 
-fun shareItem(url:String,activity:Context){
+fun shareItem(url: String, activity: Context) {
 
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
@@ -96,15 +78,20 @@ fun shareItem(url:String,activity:Context){
 
 @ExperimentalMaterialApi
 @Composable
-fun NewsList(modifier: Modifier = Modifier, list: LazyPagingItems<Article>) {
+fun NewsList(
+    modifier: Modifier = Modifier,
+    list: LazyPagingItems<Article>,
+    onItemClick: (String) -> Unit,
+    onShareItem: (String) -> Unit
+) {
     LazyColumn {
         items(list.itemCount) { index ->
             list[index]?.let { item ->
                 NewsItem(
                     modifier.fillMaxWidth(),
-                    onCLickItem = { Log.i("NewsListScreen", "NewsListScreen: Hello") },
+                    onCLickItem = { onItemClick(item.url.toString()) },
                     article = item,
-                    onShareItem = {}
+                    onShareItem = { onShareItem(item.urlToImage.toString()) }
                 )
             }
         }
@@ -113,22 +100,34 @@ fun NewsList(modifier: Modifier = Modifier, list: LazyPagingItems<Article>) {
             item {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(vertical = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Icon(
                         modifier = Modifier.size(60.dp),
-                        imageVector = Icons.Default.Favorite,
+                        imageVector = Icons.Default.CloudOff,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.primary,
+                        tint = BackGround,
                     )
                     Spacer(modifier = Modifier.size(4.dp))
                     Text(text = stringResource(R.string.connection_issue))
                     Spacer(modifier = Modifier.size(10.dp))
-                    Button(onClick = { list.retry() }, shape = CircleShape) {
+                    Button(onClick = { list.retry() }, shape = CircleShape,colors = ButtonDefaults.buttonColors(
+                        backgroundColor = BackGround,
+                        contentColor = Color.White
+                    )) {
                         Text(text = stringResource(R.string.retry))
                     }
+                }
+            }
+        }
+
+        if (list.loadState.append is LoadState.Loading){
+            item {
+                Box(Modifier.fillMaxWidth()){
+                    CircularProgressIndicator(color = BackGround,modifier = Modifier.align(Alignment.Center))
                 }
             }
         }
