@@ -11,7 +11,7 @@
 - [Room](https://developer.android.com/jetpack/androidx/releases/room) - Local Database
 - [Hilt](http://google.github.io/hilt/) - Dependency Injection
 - [Coil](https://coil-kt.github.io/coil/compose) - Image Loading
-- [Dagger Hilt]
+- [Hilt](http://google.github.io/hilt/) - Dependency Injection
 
 
 ## Architecture and Design Patterns
