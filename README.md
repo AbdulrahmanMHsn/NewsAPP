@@ -25,7 +25,7 @@
 ## ScreenShots
 
 
-![index](https://user-images.githubusercontent.com/49728648/147401099-3989a545-f4fe-4791-8c7e-41f50546710f.jpg)
+ <img src=https://user-images.githubusercontent.com/49728648/147401099-3989a545-f4fe-4791-8c7e-41f50546710f.jpg>
 
 
 ![index1](https://user-images.githubusercontent.com/49728648/147401131-d26b4e35-2d82-4a88-b078-4043a6f67c67.jpg)
