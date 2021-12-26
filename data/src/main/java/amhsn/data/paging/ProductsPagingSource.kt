@@ -4,6 +4,7 @@ import amhsn.data.repository.NewsRepoImpl
 import amhsn.domain.entities.Article
 import amhsn.domain.entities.NewsRequest
 import amhsn.domain.usecase.GetNewsUseCase
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
@@ -27,7 +28,6 @@ class ProductsPagingSource(
 
         return try {
             val response = getNewsUseCase.invoke(newsRequest,position)
-
             val nextKey = if (response.articles.isEmpty()) {
                     null
                 } else {

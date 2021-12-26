@@ -1,13 +1,10 @@
 package amhsn.data.repository
 
 import amhsn.data.local.ArticleDao
-import amhsn.data.local.NewsDatabase
 import amhsn.data.mapper.toNewsRequestData
 import amhsn.data.mapper.toNewsResponseData
 import amhsn.data.mapper.toNewsResponseDomain
-import amhsn.data.remote.Ktor
 import amhsn.data.remote.api_service.NewsAPI
-import amhsn.domain.entities.Article
 import amhsn.domain.entities.NewsRequest
 import amhsn.domain.entities.NewsResponse
 import amhsn.domain.repository.NewsRepo

@@ -6,4 +6,9 @@
     <string name="retry">Retry</string>
     <string name="connection_issue">Connection Issue</string>
     <string name="news">News</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="refresh">Refresh</string>
+    <string name="check_your_connection">Check your connection</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="please_try_again">Please try again</string>
 </resources>
