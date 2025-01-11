@@ -1,6 +1,5 @@
 package amhsn.newsapp.presentation.news_list
 
-import amhsn.data.paging.NewsPagingSource
 import amhsn.domain.entities.Article
 import amhsn.domain.entities.NewsRequest
 import amhsn.domain.usecase.GetNewsUseCase
@@ -14,7 +13,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ class NewsViewModel @Inject constructor(private val getNewsUseCase: GetNewsUseCa
     private set
 
 
-    fun getNews() = viewModelScope.launch(Dispatchers.IO) {
+    fun getNews() = viewModelScope.launch(IO) {
             val flow = Pager(
                 PagingConfig(
                     pageSize = 5,
@@ -45,7 +45,7 @@ class NewsViewModel @Inject constructor(private val getNewsUseCase: GetNewsUseCa
                 )
             }.flow.cachedIn(viewModelScope)
 
-            withContext(Dispatchers.Main)
+            withContext(Main)
             {
                 article = flow
             }

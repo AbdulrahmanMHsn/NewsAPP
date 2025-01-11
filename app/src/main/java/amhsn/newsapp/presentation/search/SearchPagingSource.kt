@@ -1,20 +1,20 @@
-package amhsn.data.paging
+package amhsn.newsapp.presentation.search
 
-import amhsn.data.repository.NewsRepoImpl
 import amhsn.domain.entities.Article
 import amhsn.domain.entities.NewsRequest
-import amhsn.domain.usecase.GetNewsUseCase
-import android.util.Log
+import amhsn.domain.usecase.SearchUseCase
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
 
-class NewsPagingSource(
-    private val getNewsUseCase: GetNewsUseCase,
+class SearchPagingSource(
+    private val searchUseCase: SearchUseCase,
     private val newsRequest: NewsRequest
 ) : PagingSource<Int, Article>() {
 
-    private val STARTING_PAGE_INDEX = 1
+    companion object{
+        private const val STARTING_PAGE_INDEX = 1
+    }
 
     override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -27,7 +27,7 @@ class NewsPagingSource(
         val position = params.key ?: STARTING_PAGE_INDEX
 
         return try {
-            val response = getNewsUseCase.invoke(newsRequest,position)
+            val response = searchUseCase.invoke(newsRequest,position)
             val nextKey = if (response.articles.isEmpty()) {
                     null
                 } else {
@@ -36,10 +36,8 @@ class NewsPagingSource(
                     position + 1
                 }
             LoadResult.Page(
-                data = if (response.articles.isNullOrEmpty()) {
+                data = response.articles.ifEmpty {
                     emptyList()
-                } else {
-                    response.articles
                 },
                 prevKey = if (position == STARTING_PAGE_INDEX) null else position - 1,
                 nextKey = nextKey
