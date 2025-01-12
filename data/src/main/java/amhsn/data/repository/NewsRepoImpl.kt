@@ -1,15 +1,20 @@
 package amhsn.data.repository
 
 import amhsn.data.local.ArticleDao
+import amhsn.data.mapper.toArticleDomain
 import amhsn.data.mapper.toNewsRequestData
 import amhsn.data.mapper.toNewsResponseData
 import amhsn.data.mapper.toNewsResponseDomain
 import amhsn.data.remote.api_service.NewsAPI
+import amhsn.domain.NoInternetConnectionException
+import amhsn.domain.entities.Article
 import amhsn.domain.entities.NewsRequest
 import amhsn.domain.entities.NewsResponse
 import amhsn.domain.repository.NewsRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class NewsRepoImpl(
     private val newsApi: NewsAPI,
@@ -25,11 +30,21 @@ class NewsRepoImpl(
     }
 
     override suspend fun getNewsLocal(): Flow<NewsResponse> {
-      return articleDao.getNews().map { it.toNewsResponseDomain() }
+        return articleDao.getNews().map { it.toNewsResponseDomain() }
     }
 
-    override suspend fun search(newsRequest: NewsRequest, page: Int): NewsResponse {
-        return newsApi.search(newsRequest.toNewsRequestData(), page).toNewsResponseDomain()
+    override suspend fun search(newsRequest: NewsRequest, page: Int): Result<List<Article>> {
+        return try {
+            val articles = newsApi.search(
+                newsRequest.toNewsRequestData(),
+                page
+            ).articleData.map { it.toArticleDomain() }
+            Result.success(articles)
+        } catch (e: UnknownHostException) {
+            Result.failure(NoInternetConnectionException(e.message))
+        } catch (e: SocketTimeoutException) {
+            Result.failure(NoInternetConnectionException(e.message))
+        }
     }
 
 }

@@ -12,7 +12,7 @@ class SearchPagingSource(
     private val newsRequest: NewsRequest
 ) : PagingSource<Int, Article>() {
 
-    companion object{
+    companion object {
         private const val STARTING_PAGE_INDEX = 1
     }
 
@@ -27,18 +27,16 @@ class SearchPagingSource(
         val position = params.key ?: STARTING_PAGE_INDEX
 
         return try {
-            val response = searchUseCase.invoke(newsRequest,position)
-            val nextKey = if (response.articles.isEmpty()) {
-                    null
-                } else {
-                    // initial load size = 3 * NETWORK_PAGE_SIZE
-                    // ensure we're not requesting duplicating items, at the 2nd request
-                    position + 1
-                }
+            val response = searchUseCase.invoke(newsRequest, position)
+            val nextKey = if (response.getOrNull().isNullOrEmpty()) {
+                null
+            } else {
+                // initial load size = 3 * NETWORK_PAGE_SIZE
+                // ensure we're not requesting duplicating items, at the 2nd request
+                position + 1
+            }
             LoadResult.Page(
-                data = response.articles.ifEmpty {
-                    emptyList()
-                },
+                data = response.getOrNull() ?: emptyList(),
                 prevKey = if (position == STARTING_PAGE_INDEX) null else position - 1,
                 nextKey = nextKey
             )
