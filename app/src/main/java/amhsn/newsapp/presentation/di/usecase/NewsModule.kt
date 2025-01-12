@@ -1,6 +1,7 @@
 package amhsn.newsapp.presentation.di.usecase
 
 import amhsn.domain.repository.NewsRepo
+import amhsn.domain.repository.SearchRepo
 import amhsn.domain.usecase.GetNewsUseCase
 import amhsn.domain.usecase.SearchUseCase
 import dagger.Module
@@ -21,8 +22,8 @@ class NewsModule {
 
     @Singleton
     @Provides
-    fun provideSearch(newsRepo: NewsRepo): SearchUseCase{
-        return SearchUseCase(newsRepo)
+    fun provideSearch(searchRepo: SearchRepo): SearchUseCase{
+        return SearchUseCase(searchRepo)
     }
 
 }

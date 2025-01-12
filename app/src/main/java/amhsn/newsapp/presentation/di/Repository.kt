@@ -3,7 +3,9 @@ package amhsn.newsapp.presentation.di
 import amhsn.data.local.ArticleDao
 import amhsn.data.remote.api_service.NewsAPI
 import amhsn.data.repository.NewsRepoImpl
+import amhsn.data.repository.SearchRepoImpl
 import amhsn.domain.repository.NewsRepo
+import amhsn.domain.repository.SearchRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,5 +24,14 @@ class Repository {
         dao: ArticleDao
     ): NewsRepo {
         return NewsRepoImpl(newsAPI,dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchRepo(
+        newsAPI: NewsAPI,
+        dao: ArticleDao
+    ): SearchRepo {
+        return SearchRepoImpl(newsAPI,dao)
     }
 }

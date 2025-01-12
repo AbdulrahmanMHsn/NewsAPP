@@ -11,25 +11,29 @@ import amhsn.domain.entities.Article
 import amhsn.domain.entities.NewsRequest
 import amhsn.domain.entities.NewsResponse
 import amhsn.domain.repository.NewsRepo
+import amhsn.domain.repository.SearchRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class NewsRepoImpl(
+class SearchRepoImpl(
     private val newsApi: NewsAPI,
     private val articleDao: ArticleDao
-) : NewsRepo {
+) : SearchRepo {
 
-    override suspend fun getNewsRemote(newsRequest: NewsRequest, page: Int): NewsResponse {
-        return newsApi.getNews(newsRequest.toNewsRequestData(), page).toNewsResponseDomain()
+    override suspend fun search(newsRequest: NewsRequest, page: Int): Result<List<Article>> {
+        return try {
+            val articles = newsApi.search(
+                newsRequest.toNewsRequestData(),
+                page
+            ).articleData.map { it.toArticleDomain() }
+            Result.success(articles)
+        } catch (e: UnknownHostException) {
+            Result.failure(NoInternetConnectionException(e.message))
+        } catch (e: SocketTimeoutException) {
+            Result.failure(NoInternetConnectionException(e.message))
+        }
     }
 
-    override suspend fun insertNewsLocal(news: NewsResponse) {
-        return articleDao.insert(news.toNewsResponseData())
-    }
-
-    override suspend fun getNewsLocal(): Flow<NewsResponse> {
-        return articleDao.getNews().map { it.toNewsResponseDomain() }
-    }
 }
